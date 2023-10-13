@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import { dbApp } from "../config/database";
 import dayjs from "dayjs";
+import { dbApp } from "@/config/database";
 
 export default async function handler(
   req: NextApiRequest,

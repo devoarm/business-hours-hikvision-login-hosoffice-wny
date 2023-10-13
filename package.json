@@ -2,6 +2,11 @@
   "name": "business-hours-hikvision",
   "version": "0.1.0",
   "private": true,
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,6 +21,7 @@
     "antd": "^5.10.0",
     "axios": "^1.5.1",
     "dayjs": "^1.11.10",
+    "fs": "^0.0.1-security",
     "knex": "^3.0.1",
     "mysql2": "^3.6.1",
     "next": "13.5.4",
