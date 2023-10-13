@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Space, Table, Tag } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import ColumnGroup from "antd/es/table/ColumnGroup";
-import Column from "antd/es/table/Column";
+import { Table } from "antd";
+// import ColumnGroup from "antd/es/table/ColumnGroup";
+
+const { Column, ColumnGroup } = Table;
+
 import dayjs from "dayjs";
 
 type Props = {
   item: Array<any>;
 };
-const DataNomalCustom = ({ item }: Props) => {
+export default function DataNomalCustom({ item }: Props) {
   const date = `${Number(2023)}-${dayjs().format("MM")}-01`;
   const lastDayOfCurrentMonth = dayjs(date).endOf("month");
   const momentDate = Number(lastDayOfCurrentMonth.format("D"));
@@ -16,8 +17,7 @@ const DataNomalCustom = ({ item }: Props) => {
   const [screenWidth, setScreenWidth] = useState<number | undefined>();
   const sorter = (a: any, b: any) =>
     isNaN(a) && isNaN(b) ? (a || "").localeCompare(b || "") : a - b;
-
-  useEffect(() => {
+  const initFun = () => {
     const arrayCol: any = [];
     for (let index = 0; index < Number(momentDate); index++) {
       const inputDate = `${Number(2023) - 543}-${dayjs(10, "M").format("MM")}-${
@@ -30,6 +30,9 @@ const DataNomalCustom = ({ item }: Props) => {
       });
     }
     setDateOfMonth(arrayCol);
+  };
+  useEffect(() => {
+    initFun();
   }, []);
 
   return (
@@ -59,18 +62,16 @@ const DataNomalCustom = ({ item }: Props) => {
             title="เข้า"
             dataIndex={`ds${item.title}`}
             key={`ds${item.title}`}
-            width={100}
+            width={120}
           />
           <Column
             title="ออก"
             dataIndex={`de${item.title}`}
             key={`de${item.title}`}
-            width={100}
+            width={120}
           />
         </ColumnGroup>
       ))}
     </Table>
   );
-};
-
-export default DataNomalCustom;
+}
