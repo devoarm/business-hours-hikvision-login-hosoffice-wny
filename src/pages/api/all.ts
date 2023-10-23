@@ -47,7 +47,7 @@ WHERE
 ) se ON se.END_PERSON_ID = h.ID   
 WHERE CONCAT(h.HR_FNAME," ",h.HR_LNAME) LIKE "%${data.fullname}%" 
 ${data.department == "0" ? "" : `AND h.HR_DEPARTMENT_ID = "${data.department}"`}
-#GROUP BY h.HR_CID     
+GROUP BY h.HR_CID     
 `;
 
         const query = await dbApp.raw(sql);
