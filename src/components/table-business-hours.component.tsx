@@ -8,9 +8,12 @@ import dayjs from "dayjs";
 
 type Props = {
   item: Array<any>;
+  selectDate: string;
 };
-export default function DataNomalCustom({ item }: Props) {
-  const date = `${Number(2023)}-${dayjs().format("MM")}-01`;
+export default function DataNomalCustom({ item, selectDate }: Props) {
+  const date = `${Number(dayjs(selectDate).format("YYYY"))}-${dayjs(
+    selectDate
+  ).format("MM")}-01`;
   const lastDayOfCurrentMonth = dayjs(date).endOf("month");
   const momentDate = Number(lastDayOfCurrentMonth.format("D"));
   const [dateOfMonth, setDateOfMonth] = useState([]);
@@ -55,7 +58,16 @@ export default function DataNomalCustom({ item }: Props) {
           sorter={(a: any, b: any) => sorter(a.fullname, b.fullname)}
         />
       )}
-
+      <Column
+        title="กลุ่มงาน"
+        dataIndex="HR_DEPARTMENT_NAME"
+        key="ID"
+        width={300}
+        filterSearch={true}
+        sorter={(a: any, b: any) =>
+          sorter(a.HR_DEPARTMENT_NAME, b.HR_DEPARTMENT_NAME)
+        }
+      />
       {dateOfMonth.map((item: any, index: number) => (
         <ColumnGroup title={item.title} align="center" key={index}>
           <Column

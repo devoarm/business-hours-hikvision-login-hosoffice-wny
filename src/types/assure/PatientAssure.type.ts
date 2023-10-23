@@ -1,0 +1,36 @@
+export interface PatientAssure {
+    vn?:             string;
+    id?:             number;
+    hn?:             string;
+    fullname?:       string;
+    occupation?:     string;
+    citizenship?:    string;
+    birthday?:       Date;
+    addrpart?:       string;
+    moopart?:        string;
+    tmbpart?:        string;
+    amppart?:        string;
+    chwpart?:        string;
+    bloodgrp?:       string;
+    firstday?:       Date;
+    hometel?:        string;
+    informaddr?:     string;
+    informname?:     string;
+    informrelation?: string;
+    informtel?:      string;
+    marrystatus?:    string;
+    nationality?:    string;
+    pttype?:         string;
+    religion?:       string;
+    sex?:            string;
+    hcode?:          string;
+    cid?:            string;
+    passport_no?:    string;
+    rcpno_list?:     string;
+    item_name?:      string;
+    insu_name?:      string;
+    vstdate?:        Date;
+    end_insu?:       Date;
+    hos_guid?:       string;
+    vstdate_new?:    Date;
+}

@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model patient {
+  vn             String    @db.VarChar
+  id             Int       @id(map: "id") @default(autoincrement())
+  hn             String?   @db.VarChar
+  fullname       String?   @db.VarChar
+  occupation     String?   @db.VarChar
+  citizenship    String?   @db.VarChar
+  birthday       DateTime? @db.Date
+  addrpart       String?   @db.VarChar
+  moopart        String?   @db.VarChar
+  tmbpart        String?   @db.VarChar(2)
+  amppart        String?   @db.VarChar(2)
+  chwpart        String?   @db.VarChar(2)
+  bloodgrp       String?   @db.VarChar
+  firstday       DateTime? @db.Date
+  hometel        String?   @db.VarChar
+  informaddr     String?   @db.VarChar
+  informname     String?   @db.VarChar
+  informrelation String?   @db.VarChar
+  informtel      String?   @db.VarChar
+  marrystatus    String?   @db.VarChar
+  nationality    String?   @db.VarChar
+  pttype         String?   @db.VarChar
+  religion       String?   @db.VarChar
+  sex            String?   @db.Char
+  hcode          String?   @db.VarChar
+  cid            String?   @db.VarChar
+  passport_no    String?   @db.VarChar
+  rcpno_list     String?   @db.VarChar
+  item_name      String?   @db.VarChar
+  insu_name      String?   @db.VarChar
+  vstdate        DateTime? @db.Date
+  end_insu       DateTime? @db.Date
+  hos_guid       String?   @db.VarChar
+  vstdate_new    DateTime? @db.Date
+}
