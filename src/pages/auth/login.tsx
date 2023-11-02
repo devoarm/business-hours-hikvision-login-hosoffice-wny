@@ -3,13 +3,15 @@ import AFormVertical from "@/@core/components/AFormVertical";
 import AInput from "@/@core/components/AInput";
 import { colors } from "@/config/theme/color";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Divider } from "antd";
+import { Button, Divider, Input } from "antd";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+
 type FormType = {
   username: string;
   password: string;
@@ -34,6 +36,8 @@ function login() {
     mode: "onBlur",
     resolver: yupResolver(schema),
   });
+  const [passwordVisible, setPasswordVisible] = React.useState(false);
+
   const onSubmit = async (data: FormType) => {
     const res = await signIn("credentials", {
       redirect: false,
@@ -70,7 +74,7 @@ function login() {
                   render={({ field }) => (
                     <AFormVertical
                       error={errors?.[`${field.name}`]}
-                      title="คำนำหน้า"
+                      title="บัญชีผู้ใช้"
                     >
                       <AInput
                         size="large"
@@ -88,13 +92,20 @@ function login() {
                   render={({ field }) => (
                     <AFormVertical
                       error={errors?.[`${field.name}`]}
-                      title="คำนำหน้า"
+                      title="รหัสผ่าน"
                     >
-                      <AInput
+                      <Input.Password
+                        size="large"
+                        {...field}
+                        status={errors?.[`${field.name}`] ? "error" : ""}
+                        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                      />
+
+                      {/* <AInput
                         size="large"
                         {...field}
                         error={errors?.[`${field.name}`]}
-                      />
+                      /> */}
                     </AFormVertical>
                   )}
                 />

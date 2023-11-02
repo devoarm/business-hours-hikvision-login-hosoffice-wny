@@ -141,7 +141,13 @@ export default function Home() {
       <div className="pt-5">
         <div className="flex justify-center mb-5 ">
           <Input
-            placeholder="ค้นหาชื่อ"            
+            placeholder="ค้นหาชื่อ"
+            disabled={
+              session?.role.filter((item: any) => item == "DRCOMP_FINGER")
+                .length! > 0
+                ? false
+                : true
+            }
             onChange={handleInputChange}
           />
 
@@ -149,7 +155,6 @@ export default function Home() {
             onChange={onChange}
             defaultValue={dayjs()}
             picker="month"
-            // locale={locale}
             style={{ width: 300 }}
           />
         </div>
@@ -163,6 +168,12 @@ export default function Home() {
             onChange={onChangeDepartMent}
             filterOption={filterOption}
             options={departments}
+            disabled={
+              session?.role.filter((item: any) => item == "DRCOMP_FINGER")
+                .length! > 0
+                ? false
+                : true
+            }
           />
           <AButton className="ml-3" onClick={handleExport}>
             Export

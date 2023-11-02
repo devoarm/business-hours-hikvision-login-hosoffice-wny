@@ -1,4 +1,3 @@
-import { colors } from "@/config/color";
 import { Button, Input, InputProps, InputRef } from "antd";
 import { SizeType } from "antd/es/config-provider/SizeContext";
 import React, { ButtonHTMLAttributes } from "react";

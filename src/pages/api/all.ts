@@ -55,7 +55,7 @@ export default async function handler(
           }
           ${data.userId !== 0 ? `AND h.ID = ${data.userId}` : ""}
           GROUP BY h.HR_CID`;
-
+        
         const query = await dbApp.raw(sql);
         res.json({ status: 200, results: query[0], msg: sql });
       } catch (error: any) {

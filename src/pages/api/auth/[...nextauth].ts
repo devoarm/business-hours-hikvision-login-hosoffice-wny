@@ -21,39 +21,44 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const queryUser = await dbApp("hr_person")
-          .where({
-            HR_USERNAME: credentials?.username,
-            HR_PASSWORD: md5(credentials?.password!),
-          })
-          .select(
-            "ID",
-            "FINGLE_ID",
-            "HR_CID",
-            "HR_FNAME",
-            "HR_LNAME",
-            "HR_DEPARTMENT_ID",
-            "HR_DEPARTMENT_SUB_ID",
-            "HR_DEPARTMENT_SUB_SUB_ID"
-          )
-          .first();
+        try {
+          const queryUser = await dbApp("hr_person")
+            .where({
+              HR_USERNAME: credentials?.username,
+              HR_PASSWORD: md5(credentials?.password!),
+            })
+            .select(
+              "ID",
+              "FINGLE_ID",
+              "HR_CID",
+              "HR_FNAME",
+              "HR_LNAME",
+              "HR_DEPARTMENT_ID",
+              "HR_DEPARTMENT_SUB_ID",
+              "HR_DEPARTMENT_SUB_SUB_ID"
+            )
+            .first();
 
-        if (!queryUser) {
+          if (!queryUser) {
+            return null;
+          }
+          const permis = await dbApp("sys_permis_list")
+            .where("PERSON_ID", queryUser.ID)
+            .select("PERMIS_ID");
+          const mapPermis = permis.map((item: any) => {
+            return item.PERMIS_ID;
+          });
+
+          const user = {
+            ...queryUser,
+            role: mapPermis,
+          };
+
+          return user;
+        } catch (error: any) {
+          console.log(error.message);
           return null;
         }
-        const permis = await dbApp("sys_permis_list");
-        const filterPermis = permis.filter(
-          (item: any) => item.PERSON_ID == queryUser.ID
-        );
-        const mapPermis = filterPermis.map((item: any) => {
-          return item.PERMIS_ID;
-        });
-        const user = {
-          ...queryUser,
-          role: mapPermis,
-        };
-
-        return user;
       },
     }),
   ],
