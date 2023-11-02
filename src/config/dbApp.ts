@@ -10,7 +10,7 @@ export const dbApp: Knex = require("knex")({
           port: 3306,
           user: "root",
           password: "",
-          database: "hosofficedb",
+          database: "hosofficedb_ksh",
         }
       : {
           // socketPath : '/tmp/mysql.sock',
