@@ -62,9 +62,11 @@ export default function Home() {
     fetchData(selectMount, newValue, selectDepart);
   };
   useEffect(() => {
-    fetchData(selectMount, fullname, selectDepart);
     fetchDepart();
   }, []);
+  useEffect(() => {
+    fetchData(selectMount, fullname, selectDepart);
+  }, [session,selectMount, fullname, selectDepart]);
 
   const onChangeDepartMent = (value: string) => {
     fetchData(selectMount, fullname, value);
