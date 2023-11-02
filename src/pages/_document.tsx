@@ -5,7 +5,7 @@ import type { DocumentContext } from 'next/document';
 
 const MyDocument = () => (
   <Html lang="th">
-    <Head />
+    <Head title='FINGER-REPORT'/>
     <body>
       <Main />
       <NextScript />
