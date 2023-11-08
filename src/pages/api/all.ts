@@ -55,43 +55,14 @@ export default async function handler(
               : `AND h.HR_DEPARTMENT_ID = "${data.department}"`
           }
           ${data.userId !== 0 ? `AND h.ID = ${data.userId}` : ""}
-          #GROUP BY h.HR_CID`;
+          GROUP BY h.HR_CID`;
 
-        const leave = await dbApp.raw(`
-        SELECT 
-          *
-        FROM leave_register l
-        WHERE 
-          l.LEAVE_PERSON_ID = ${data.userId}	
-          AND "${dayjs(data.month).format(
-            "YYYY"
-          )}" BETWEEN YEAR(l.LEAVE_DATE_BEGIN) AND YEAR(l.LEAVE_DATE_END)
-          AND "${dayjs(data.month).format(
-            "MM"
-          )}" BETWEEN MONTH(l.LEAVE_DATE_BEGIN) AND MONTH(l.LEAVE_DATE_END)`);
-
-        const record = await dbApp.raw(`
-        SELECT 
-          ri.HR_ID,
-          DATE_FORMAT(ri.DATE_GO,'%Y-%m-%d') AS DATE_GO,
-          DATE_FORMAT(ri.DATE_BACK,'%Y-%m-%d') AS DATE_BACK	
-        FROM record_index ri
-        WHERE 
-          ri.HR_ID = ${data.userId}	
-          AND "${dayjs(data.month).format(
-            "YYYY"
-          )}" BETWEEN YEAR(ri.DATE_GO) AND YEAR(ri.DATE_BACK)
-          AND "${dayjs(data.month).format(
-            "MM"
-          )}" BETWEEN MONTH(ri.DATE_GO) AND MONTH(ri.DATE_BACK)`);
         const query = await dbApp.raw(sql);
         console.log(sqlLeaveAndRecord(data.month, data.userId));
         res.json({
           status: 200,
           results: query[0],
           msg: sql,
-          leave: leave[0],
-          record: record[0],
         });
       } catch (error: any) {
         res.json({ status: 500, results: error.message });

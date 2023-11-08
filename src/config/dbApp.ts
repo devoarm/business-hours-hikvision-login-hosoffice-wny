@@ -6,7 +6,7 @@ export const dbApp: Knex = require("knex")({
     host: "11.1.1.6",
     port: 3306,
     user: "root",
-    password: "Whyhos10868",
+    password: "Wny@10868",
     database: "hosoffice",
   },
   // connection:
