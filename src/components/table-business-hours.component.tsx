@@ -75,7 +75,7 @@ export default function DataNomalCustom({ item, selectDate }: Props) {
         width={200}
         filterSearch={true}
         sorter={(a: any, b: any) =>
-          sorter(a.HR_DEPARTMENT_NAME, b.HR_DEPARTMENT_NAME)
+          sorter(a.count, b.count)
         }
       />
       {dateOfMonth.map((item: any, index: number) => (
