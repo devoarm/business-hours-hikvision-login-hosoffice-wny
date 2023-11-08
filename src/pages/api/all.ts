@@ -3,6 +3,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import dayjs from "dayjs";
 import { dbApp } from "@/config/dbApp";
+import { sqlLeaveAndRecord } from "@/helper/api/sql/LeaveAndRecord";
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,12 +15,12 @@ export default async function handler(
         const data = req.body;
         const sql = `
         SELECT 
+        ${sqlLeaveAndRecord(data.month, data.userId)}
         CONCAT(h.HR_FNAME," ",h.HR_LNAME) as fullname,
         hrd.HR_DEPARTMENT_NAME,
         h.ID,
-        h.FINGLE_ID,
-        ss.*,
-        se.*
+        h.FINGLE_ID        
+        
         FROM hr_person h
         LEFT JOIN hr_department hrd ON h.HR_DEPARTMENT_ID = hrd.HR_DEPARTMENT_ID
         LEFT JOIN (
@@ -54,10 +55,44 @@ export default async function handler(
               : `AND h.HR_DEPARTMENT_ID = "${data.department}"`
           }
           ${data.userId !== 0 ? `AND h.ID = ${data.userId}` : ""}
-          GROUP BY h.HR_CID`;
-        
+          #GROUP BY h.HR_CID`;
+
+        const leave = await dbApp.raw(`
+        SELECT 
+          *
+        FROM leave_register l
+        WHERE 
+          l.LEAVE_PERSON_ID = ${data.userId}	
+          AND "${dayjs(data.month).format(
+            "YYYY"
+          )}" BETWEEN YEAR(l.LEAVE_DATE_BEGIN) AND YEAR(l.LEAVE_DATE_END)
+          AND "${dayjs(data.month).format(
+            "MM"
+          )}" BETWEEN MONTH(l.LEAVE_DATE_BEGIN) AND MONTH(l.LEAVE_DATE_END)`);
+
+        const record = await dbApp.raw(`
+        SELECT 
+          ri.HR_ID,
+          DATE_FORMAT(ri.DATE_GO,'%Y-%m-%d') AS DATE_GO,
+          DATE_FORMAT(ri.DATE_BACK,'%Y-%m-%d') AS DATE_BACK	
+        FROM record_index ri
+        WHERE 
+          ri.HR_ID = ${data.userId}	
+          AND "${dayjs(data.month).format(
+            "YYYY"
+          )}" BETWEEN YEAR(ri.DATE_GO) AND YEAR(ri.DATE_BACK)
+          AND "${dayjs(data.month).format(
+            "MM"
+          )}" BETWEEN MONTH(ri.DATE_GO) AND MONTH(ri.DATE_BACK)`);
         const query = await dbApp.raw(sql);
-        res.json({ status: 200, results: query[0], msg: sql });
+        console.log(sqlLeaveAndRecord(data.month, data.userId));
+        res.json({
+          status: 200,
+          results: query[0],
+          msg: sql,
+          leave: leave[0],
+          record: record[0],
+        });
       } catch (error: any) {
         res.json({ status: 500, results: error.message });
       }
