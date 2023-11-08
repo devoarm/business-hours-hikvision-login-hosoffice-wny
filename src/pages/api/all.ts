@@ -4,6 +4,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import dayjs from "dayjs";
 import { dbApp } from "@/config/dbApp";
 import { sqlLeaveAndRecord } from "@/helper/api/sql/LeaveAndRecord";
+import { MapFingle } from "@/helper/api/MapFingle";
+import { CountScanOffMount } from "@/helper/api/CountScanOffMount";
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,14 +15,15 @@ export default async function handler(
     case "POST":
       try {
         const data = req.body;
+        // sqlLeaveAndRecord(data.month, data.userId)
         const sql = `
         SELECT 
-        ${sqlLeaveAndRecord(data.month, data.userId)}
-        CONCAT(h.HR_FNAME," ",h.HR_LNAME) as fullname,
-        hrd.HR_DEPARTMENT_NAME,
-        h.ID,
-        h.FINGLE_ID        
-        
+          CONCAT(h.HR_FNAME," ",h.HR_LNAME) as fullname,
+          hrd.HR_DEPARTMENT_NAME,
+          h.ID,
+          h.FINGLE_ID,
+          ss.*,
+          se.*                
         FROM hr_person h
         LEFT JOIN hr_department hrd ON h.HR_DEPARTMENT_ID = hrd.HR_DEPARTMENT_ID
         LEFT JOIN (
@@ -56,12 +59,54 @@ export default async function handler(
           }
           ${data.userId !== 0 ? `AND h.ID = ${data.userId}` : ""}
           GROUP BY h.HR_CID`;
-
+        const record = await dbApp.raw(`SELECT 
+        ri.HR_ID,
+        ri.DATE_GO,
+        ri.DATE_BACK
+      FROM record_index ri 
+      WHERE 
+        YEAR(ri.DATE_GO) = "${dayjs(data.month).format("YYYY")}"
+        AND MONTH(ri.DATE_GO) = "${dayjs(data.month).format("MM")}"
+        AND (ri.CANCEL_STATUS <> 'True' OR ri.CANCEL_STATUS IS NULL OR ri.CANCEL_STATUS = "") 
+        
+        `);
+        const leave = await dbApp.raw(`SELECT 
+        l.LEAVE_PERSON_ID,
+        l.LEAVE_DATE_BEGIN,
+        l.LEAVE_DATE_END
+      FROM leave_register l 
+      WHERE 
+        YEAR(l.LEAVE_DATE_BEGIN) = "${dayjs(data.month).format("YYYY")}"
+        AND MONTH(l.LEAVE_DATE_BEGIN) = "${dayjs(data.month).format("MM")}"
+        AND l.LEAVE_CANCEL_STATUS != 'True'`);
         const query = await dbApp.raw(sql);
-        console.log(sqlLeaveAndRecord(data.month, data.userId));
+        // console.log(sqlLeaveAndRecord(data.month, data.userId));
+        const qCountScan = await dbApp.raw(`SELECT 
+        h.EmployeeID,
+        h.AccessDate
+      FROM hikvision h
+      WHERE
+          YEAR(h.AccessDate) = "${dayjs(data.month).format("YYYY")}"
+          AND MONTH(h.AccessDate) = "${dayjs(data.month).format("MM")}"
+      `);
+        const countScan = CountScanOffMount(qCountScan[0]);
+        const finalData = MapFingle(
+          record[0],
+          leave[0],
+          query[0],
+          data.month
+        ).map((item: any) => {
+          const cs = countScan.filter(
+            (find: any) => item.FINGLE_ID == find.EmployeeID
+          );
+          return {
+            ...item,
+            count: cs.length > 0 ? cs[0].count : 0,
+          };
+        });
         res.json({
           status: 200,
-          results: query[0],
+          results: finalData,
           msg: sql,
         });
       } catch (error: any) {
