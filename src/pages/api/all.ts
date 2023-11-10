@@ -73,9 +73,11 @@ export default async function handler(
         `);
         const leave = await dbApp.raw(`SELECT 
         l.LEAVE_PERSON_ID,
+        lt.LEAVE_TYPE_NAME,
         l.LEAVE_DATE_BEGIN,
         l.LEAVE_DATE_END
       FROM leave_register l 
+      LEFT JOIN leave_type lt ON lt.LEAVE_TYPE_ID = l.LEAVE_TYPE_CODE
       WHERE 
         YEAR(l.LEAVE_DATE_BEGIN) = "${dayjs(data.month).format("YYYY")}"
         AND MONTH(l.LEAVE_DATE_BEGIN) = "${dayjs(data.month).format("MM")}"

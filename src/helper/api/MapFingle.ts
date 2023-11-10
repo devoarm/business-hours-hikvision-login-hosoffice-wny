@@ -5,6 +5,14 @@ export const MapFingle = (record: [], leave: [], fingle: [], month: string) => {
   const mapfingle = fingle.map((item: any) => {
     for (let index = 1; index <= dayjs(month).daysInMonth(); index++) {
       let dateString = index < 10 ? `0${index}` : `${index}`;
+      const findLeave: any = leave.filter(
+        (itemLeave: any) =>
+          item.ID == itemLeave.LEAVE_PERSON_ID &&
+          dayjs(itemLeave.LEAVE_DATE_BEGIN).format("YYYY-MM-DD") <=
+            `${month}-${dateString}` &&
+          dayjs(itemLeave.LEAVE_DATE_END).format("YYYY-MM-DD") >=
+            `${month}-${dateString}`
+      );
       dsDay = {
         ...dsDay,
         [`ds${index}`]:
@@ -17,15 +25,8 @@ export const MapFingle = (record: [], leave: [], fingle: [], month: string) => {
                 `${month}-${dateString}`
           ).length > 0
             ? "ไปราชการ"
-            : leave.filter(
-                (itemLeave: any) =>
-                  item.ID == itemLeave.LEAVE_PERSON_ID &&
-                  dayjs(itemLeave.LEAVE_DATE_BEGIN).format("YYYY-MM-DD") <=
-                    `${month}-${dateString}` &&
-                  dayjs(itemLeave.LEAVE_DATE_END).format("YYYY-MM-DD") >=
-                    `${month}-${dateString}`
-              ).length > 0
-            ? "ลา"
+            : findLeave.length > 0
+            ? findLeave[0].LEAVE_TYPE_NAME
             : item?.[`ds${index}`],
         [`de${index}`]:
           record.filter(
@@ -37,15 +38,8 @@ export const MapFingle = (record: [], leave: [], fingle: [], month: string) => {
                 `${month}-${dateString}`
           ).length > 0
             ? "ไปราชการ"
-            : leave.filter(
-                (itemLeave: any) =>
-                  item.ID == itemLeave.LEAVE_PERSON_ID &&
-                  dayjs(itemLeave.LEAVE_DATE_BEGIN).format("YYYY-MM-DD") <=
-                    `${month}-${dateString}` &&
-                  dayjs(itemLeave.LEAVE_DATE_END).format("YYYY-MM-DD") >=
-                    `${month}-${dateString}`
-              ).length > 0
-            ? "ลา"
+            : findLeave.length > 0
+            ? findLeave[0].LEAVE_TYPE_NAME
             : item?.[`de${index}`],
       };
     }
