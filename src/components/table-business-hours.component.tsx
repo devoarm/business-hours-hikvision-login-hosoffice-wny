@@ -69,13 +69,23 @@ export default function DataNomalCustom({ item, selectDate }: Props) {
         }
       />
       <Column
-        title="จำนวนวันที่แสกนนิ้ว"
-        dataIndex="count"
+        title="จำนวนวันเข้างาน"
+        dataIndex="countStart"
         key="ID"
         width={200}
         filterSearch={true}
         sorter={(a: any, b: any) =>
-          sorter(a.count, b.count)
+          sorter(a.countStart, b.countStart)
+        }
+      />
+      <Column
+        title="จำนวนวันออกงาน"
+        dataIndex="countEnd"
+        key="ID"
+        width={200}
+        filterSearch={true}
+        sorter={(a: any, b: any) =>
+          sorter(a.countEnd, b.countEnd)
         }
       />
       {dateOfMonth.map((item: any, index: number) => (

@@ -4,7 +4,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import "dayjs/locale/th";
 import dayjs from "dayjs";
 import axios from "axios";
-import { DatePicker, DatePickerProps, Input, Select } from "antd";
+import { DatePicker, DatePickerProps, Input, Select, Spin } from "antd";
 import DataNomalCustom from "@/components/table-business-hours.component";
 import { DepartmentType } from "@/types/department.type";
 import AButton from "@/@core/components/AButton";
@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 
 export default function Home() {
   const [businessHours, setBusinessHours] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { data: session, status } = useSession();
   const [fullname, setFullname] = useState("");
   const [selectMount, setSelectMount] = useState(dayjs().format("YYYY-MM"));
@@ -29,6 +30,7 @@ export default function Home() {
     department: string
   ) => {
     setBusinessHours([]);
+    setLoading(true);
     const res = await axios.post(`/api/all`, {
       month: month,
       fullname: fullname,
@@ -40,6 +42,7 @@ export default function Home() {
     });
     if (res.data.status == 200) {
       setBusinessHours(res.data.results);
+      setLoading(false);
     }
   };
   const fetchDepart = async () => {
@@ -66,7 +69,7 @@ export default function Home() {
   }, []);
   useEffect(() => {
     fetchData(selectMount, fullname, selectDepart);
-  }, [session,selectMount, fullname, selectDepart]);
+  }, [session, selectMount, fullname, selectDepart]);
 
   const onChangeDepartMent = (value: string) => {
     fetchData(selectMount, fullname, value);
@@ -181,7 +184,15 @@ export default function Home() {
             Export
           </AButton>
         </div>
-        <DataNomalCustom item={businessHours} selectDate={selectMount} />
+        {loading ? (
+          <div className="mt-[150px]">
+            <Spin tip="Loading" size="large">
+              <div className="content" />
+            </Spin>
+          </div>
+        ) : (
+          <DataNomalCustom item={businessHours} selectDate={selectMount} />
+        )}
       </div>
     </div>
   );
