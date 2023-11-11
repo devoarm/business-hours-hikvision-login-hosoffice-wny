@@ -10,13 +10,12 @@ export const dbApp: Knex = require("knex")({
   // },
   connection:
     process.env.NODE_ENV == "development"
-      ? {
-          socketPath: "/tmp/mysql.sock",
+      ? {          
           host: "localhost",
           port: 3306,
           user: "root",
           password: "",
-          database: "hosofficedb_ksh",
+          database: "hosoffice_ksh",
         }
       : {
           host: process.env.hostApp,

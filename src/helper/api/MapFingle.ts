@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-export const MapFingle = (record: [], leave: [], fingle: [], month: string) => {
+export const MapFingle = (record: [], leave: [], fingle: [], month: string) => {  
   let dsDay = {};
   const mapfingle = fingle.map((item: any) => {
     for (let index = 1; index <= dayjs(month).daysInMonth(); index++) {
