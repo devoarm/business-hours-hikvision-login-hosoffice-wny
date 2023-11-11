@@ -15,7 +15,6 @@ export const CountScanOffMount = (row: []) => {
       resultData.push({ EmployeeID, count: 1 });
     }
   });
-
-  console.log(resultData);
+  
   return resultData;
 };
