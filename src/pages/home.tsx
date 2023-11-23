@@ -4,7 +4,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import "dayjs/locale/th";
 import dayjs from "dayjs";
 import axios from "axios";
-import { DatePicker, DatePickerProps, Input, Select } from "antd";
+import { DatePicker, DatePickerProps, Input, Select, Spin } from "antd";
 import DataNomalCustom from "@/components/table-business-hours.component";
 import { DepartmentType } from "@/types/department.type";
 import AButton from "@/@core/components/AButton";
@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 
 export default function Home() {
   const [businessHours, setBusinessHours] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { data: session, status } = useSession();
   const [fullname, setFullname] = useState("");
   const [selectMount, setSelectMount] = useState(dayjs().format("YYYY-MM"));
@@ -21,7 +22,6 @@ export default function Home() {
   const route = useRouter();
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
     setSelectMount(dateString);
-    fetchData(dateString, fullname, selectDepart);
   };
   const fetchData = async (
     month: string,
@@ -29,6 +29,7 @@ export default function Home() {
     department: string
   ) => {
     setBusinessHours([]);
+    setLoading(true);
     const res = await axios.post(`/api/all`, {
       month: month,
       fullname: fullname,
@@ -40,6 +41,7 @@ export default function Home() {
     });
     if (res.data.status == 200) {
       setBusinessHours(res.data.results);
+      setLoading(false);
     }
   };
   const fetchDepart = async () => {
@@ -59,17 +61,15 @@ export default function Home() {
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setFullname(newValue);
-    fetchData(selectMount, newValue, selectDepart);
   };
   useEffect(() => {
     fetchDepart();
   }, []);
   useEffect(() => {
     fetchData(selectMount, fullname, selectDepart);
-  }, [session,selectMount, fullname, selectDepart]);
+  }, [session]);
 
   const onChangeDepartMent = (value: string) => {
-    fetchData(selectMount, fullname, value);
     setSelectDepart(value);
   };
 
@@ -177,11 +177,27 @@ export default function Home() {
                 : true
             }
           />
-          <AButton className="ml-3" onClick={handleExport}>
+          <AButton
+            className="ml-3"
+            onClick={() => {
+              fetchData(selectMount, fullname, selectDepart);
+            }}
+          >
+            ค้นหา
+          </AButton>
+          <AButton className="ml-3" onClick={handleExport} color="success">
             Export
           </AButton>
         </div>
-        <DataNomalCustom item={businessHours} selectDate={selectMount} />
+        {loading ? (
+          <div className="mt-[150px]">
+            <Spin tip="Loading" size="large">
+              <div className="content" />
+            </Spin>
+          </div>
+        ) : (
+          <DataNomalCustom item={businessHours} selectDate={selectMount} />
+        )}
       </div>
     </div>
   );

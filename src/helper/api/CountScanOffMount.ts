@@ -1,22 +1,20 @@
 export const CountScanOffMount = (row: []) => {
-    const count:any = [];
-    const countMap:any = {};
-    
-    row.forEach((entry:any) => {
-      const employeeID = entry.EmployeeID;
-      if (!countMap[employeeID]) {
-        countMap[employeeID] = 1;
-      } else {
-        countMap[employeeID]++;
-      }
-    });
-    
-    for (const employeeID in countMap) {
-      count.push({
-        "EmployeeID": employeeID,
-        "count": countMap[employeeID]
-      });
+  const resultData: any = [];
+
+  const countMap: any = {};
+
+  row.forEach((item: any) => {
+    const { EmployeeID, AccessDate } = item;
+    const existingEntry = resultData.find(
+      (entry: any) => entry.EmployeeID === EmployeeID
+    );
+
+    if (existingEntry) {
+      existingEntry.count++;
+    } else {
+      resultData.push({ EmployeeID, count: 1 });
     }
-    
-    return count
+  });
+  
+  return resultData;
 };

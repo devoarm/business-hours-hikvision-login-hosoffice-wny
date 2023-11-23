@@ -6,6 +6,8 @@ import { dbApp } from "@/config/dbApp";
 import { sqlLeaveAndRecord } from "@/helper/api/sql/LeaveAndRecord";
 import { MapFingle } from "@/helper/api/MapFingle";
 import { CountScanOffMount } from "@/helper/api/CountScanOffMount";
+import { isValidTimeFormat } from "@/helper/api/isValidDateFormat";
+import { loopDateAuth } from "@/helper/api/sql/SqlAuthScan";
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,50 +17,37 @@ export default async function handler(
     case "POST":
       try {
         const data = req.body;
-        // sqlLeaveAndRecord(data.month, data.userId)
-        const sql = `
-        SELECT 
-          CONCAT(h.HR_FNAME," ",h.HR_LNAME) as fullname,
-          hrd.HR_DEPARTMENT_NAME,
-          h.ID,
-          h.FINGLE_ID,
-          ss.*,
-          se.*                
-        FROM hr_person h
-        LEFT JOIN hr_department hrd ON h.HR_DEPARTMENT_ID = hrd.HR_DEPARTMENT_ID
-        LEFT JOIN (
-        SELECT	
-            p_start.ID as START_PERSON_ID,
-            IF(DAY(h_start.AccessDate) = '1',h_start.AccessTime,null) as 'ds1',IF(DAY(h_start.AccessDate) = '2',h_start.AccessTime,null) as 'ds2',IF(DAY(h_start.AccessDate) = '3',h_start.AccessTime,null) as 'ds3',IF(DAY(h_start.AccessDate) = '4',h_start.AccessTime,null) as 'ds4',IF(DAY(h_start.AccessDate) = '5',h_start.AccessTime,null) as 'ds5',IF(DAY(h_start.AccessDate) = '6',h_start.AccessTime,null) as 'ds6',IF(DAY(h_start.AccessDate) = '7',h_start.AccessTime,null) as 'ds7',IF(DAY(h_start.AccessDate) = '8',h_start.AccessTime,null) as 'ds8',IF(DAY(h_start.AccessDate) = '9',h_start.AccessTime,null) as 'ds9',IF(DAY(h_start.AccessDate) = '10',h_start.AccessTime,null) as 'ds10',IF(DAY(h_start.AccessDate) = '11',h_start.AccessTime,null) as 'ds11',IF(DAY(h_start.AccessDate) = '12',h_start.AccessTime,null) as 'ds12',IF(DAY(h_start.AccessDate) = '13',h_start.AccessTime,null) as 'ds13',IF(DAY(h_start.AccessDate) = '14',h_start.AccessTime,null) as 'ds14',IF(DAY(h_start.AccessDate) = '15',h_start.AccessTime,null) as 'ds15',IF(DAY(h_start.AccessDate) = '16',h_start.AccessTime,null) as 'ds16',IF(DAY(h_start.AccessDate) = '17',h_start.AccessTime,null) as 'ds17',IF(DAY(h_start.AccessDate) = '18',h_start.AccessTime,null) as 'ds18',IF(DAY(h_start.AccessDate) = '19',h_start.AccessTime,null) as 'ds19',IF(DAY(h_start.AccessDate) = '20',h_start.AccessTime,null) as 'ds20',IF(DAY(h_start.AccessDate) = '21',h_start.AccessTime,null) as 'ds21',IF(DAY(h_start.AccessDate) = '22',h_start.AccessTime,null) as 'ds22',IF(DAY(h_start.AccessDate) = '23',h_start.AccessTime,null) as 'ds23',IF(DAY(h_start.AccessDate) = '24',h_start.AccessTime,null) as 'ds24',IF(DAY(h_start.AccessDate) = '25',h_start.AccessTime,null) as 'ds25',IF(DAY(h_start.AccessDate) = '26',h_start.AccessTime,null) as 'ds26',IF(DAY(h_start.AccessDate) = '27',h_start.AccessTime,null) as 'ds27',IF(DAY(h_start.AccessDate) = '28',h_start.AccessTime,null) as 'ds28',IF(DAY(h_start.AccessDate) = '29',h_start.AccessTime,null) as 'ds29',IF(DAY(h_start.AccessDate) = '30',h_start.AccessTime,null) as 'ds30',IF(DAY(h_start.AccessDate) = '31',h_start.AccessTime,null) as 'ds31'
-        FROM hr_person as p_start
-        LEFT JOIN hikvision h_start ON  p_start.FINGLE_ID = h_start.employeeID
-        WHERE 
-            YEAR(h_start.AccessDate) = "${dayjs(data.month).format("YYYY")}"
-            AND MONTH(h_start.AccessDate) = "${dayjs(data.month).format("MM")}"
-            AND h_start.AccessTime <= '12:00:00'
-            
-        ) ss ON ss.START_PERSON_ID = h.ID
-        LEFT JOIN (
-        SELECT	
-            p_end.ID as END_PERSON_ID,
-            IF(DAY(h_end.AccessDate) = '1',h_end.AccessTime,null) as 'de1',IF(DAY(h_end.AccessDate) = '2',h_end.AccessTime,null) as 'de2',IF(DAY(h_end.AccessDate) = '3',h_end.AccessTime,null) as 'de3',IF(DAY(h_end.AccessDate) = '4',h_end.AccessTime,null) as 'de4',IF(DAY(h_end.AccessDate) = '5',h_end.AccessTime,null) as 'de5',IF(DAY(h_end.AccessDate) = '6',h_end.AccessTime,null) as 'de6',IF(DAY(h_end.AccessDate) = '7',h_end.AccessTime,null) as 'de7',IF(DAY(h_end.AccessDate) = '8',h_end.AccessTime,null) as 'de8',IF(DAY(h_end.AccessDate) = '9',h_end.AccessTime,null) as 'de9',IF(DAY(h_end.AccessDate) = '10',h_end.AccessTime,null) as 'de10',IF(DAY(h_end.AccessDate) = '11',h_end.AccessTime,null) as 'de11',IF(DAY(h_end.AccessDate) = '12',h_end.AccessTime,null) as 'de12',IF(DAY(h_end.AccessDate) = '13',h_end.AccessTime,null) as 'de13',IF(DAY(h_end.AccessDate) = '14',h_end.AccessTime,null) as 'de14',IF(DAY(h_end.AccessDate) = '15',h_end.AccessTime,null) as 'de15',IF(DAY(h_end.AccessDate) = '16',h_end.AccessTime,null) as 'de16',IF(DAY(h_end.AccessDate) = '17',h_end.AccessTime,null) as 'de17',IF(DAY(h_end.AccessDate) = '18',h_end.AccessTime,null) as 'de18',IF(DAY(h_end.AccessDate) = '19',h_end.AccessTime,null) as 'de19',IF(DAY(h_end.AccessDate) = '20',h_end.AccessTime,null) as 'de20',IF(DAY(h_end.AccessDate) = '21',h_end.AccessTime,null) as 'de21',IF(DAY(h_end.AccessDate) = '22',h_end.AccessTime,null) as 'de22',IF(DAY(h_end.AccessDate) = '23',h_end.AccessTime,null) as 'de23',IF(DAY(h_end.AccessDate) = '24',h_end.AccessTime,null) as 'de24',IF(DAY(h_end.AccessDate) = '25',h_end.AccessTime,null) as 'de25',IF(DAY(h_end.AccessDate) = '26',h_end.AccessTime,null) as 'de26',IF(DAY(h_end.AccessDate) = '27',h_end.AccessTime,null) as 'de27',IF(DAY(h_end.AccessDate) = '28',h_end.AccessTime,null) as 'de28',IF(DAY(h_end.AccessDate) = '29',h_end.AccessTime,null) as 'de29',IF(DAY(h_end.AccessDate) = '30',h_end.AccessTime,null) as 'de30',IF(DAY(h_end.AccessDate) = '31',h_end.AccessTime,null) as 'de31'
-        FROM hr_person as p_end
-        LEFT JOIN hikvision h_end ON  p_end.FINGLE_ID = h_end.employeeID
-        WHERE 
-            YEAR(h_end.AccessDate) = "${dayjs(data.month).format("YYYY")}"
-            AND MONTH(h_end.AccessDate) = "${dayjs(data.month).format("MM")}"
-            AND h_end.AccessTime >= '12:00:00'
-            
-        ) se ON se.END_PERSON_ID = h.ID   
-        WHERE 
-          CONCAT(h.HR_FNAME," ",h.HR_LNAME) LIKE "%${data.fullname}%" 
-          ${
-            data.department == "0"
-              ? ""
-              : `AND h.HR_DEPARTMENT_ID = "${data.department}"`
-          }
-          ${data.userId !== 0 ? `AND h.ID = ${data.userId}` : ""}
-          GROUP BY h.HR_CID`;
+        const sql = `SELECT 
+        hp.ID,
+        CONCAT(hp.HR_FNAME," ",hp.HR_LNAME) as fullname,
+        hd.HR_DEPARTMENT_NAME,
+        ds.* ,
+        de.*
+      FROM hr_person hp
+      LEFT JOIN (SELECT 
+        ${loopDateAuth("morning", data.month)}
+        p.ID
+      FROM hr_person p
+      LEFT JOIN hikvision hik ON p.ID = hik.employeeID AND hik.AccessTime <= '11:59'
+      GROUP BY p.ID, p.HR_FNAME, hik.employeeID) ds ON ds.ID = hp.ID
+
+      LEFT JOIN (SELECT 	
+        ${loopDateAuth("afternoon", data.month)}
+        p.ID       
+      FROM hr_person p
+      LEFT JOIN hikvision hik ON p.ID = hik.employeeID AND hik.AccessTime >= '12:00'
+      GROUP BY p.ID, p.HR_FNAME, hik.employeeID) de ON de.ID = hp.ID
+      
+      LEFT JOIN hr_department hd ON hp.HR_DEPARTMENT_ID = hd.HR_DEPARTMENT_ID
+      WHERE
+        CONCAT(hp.HR_FNAME," ",hp.HR_LNAME) LIKE '%${data.fullname}%'
+        ${data.userId !== 0 ? `AND hp.ID = ${data.userId}` : ""}
+        ${
+          data.department == "0"
+            ? ``
+            : `AND hp.HR_DEPARTMENT_ID = ${data.department}`
+        }`;
+
         const record = await dbApp.raw(`SELECT 
         ri.HR_ID,
         ri.DATE_GO,
@@ -72,37 +61,38 @@ export default async function handler(
         `);
         const leave = await dbApp.raw(`SELECT 
         l.LEAVE_PERSON_ID,
+        lt.LEAVE_TYPE_NAME,
         l.LEAVE_DATE_BEGIN,
         l.LEAVE_DATE_END
       FROM leave_register l 
+      LEFT JOIN leave_type lt ON lt.LEAVE_TYPE_ID = l.LEAVE_TYPE_CODE
       WHERE 
         YEAR(l.LEAVE_DATE_BEGIN) = "${dayjs(data.month).format("YYYY")}"
         AND MONTH(l.LEAVE_DATE_BEGIN) = "${dayjs(data.month).format("MM")}"
         AND l.LEAVE_CANCEL_STATUS != 'True'`);
         const query = await dbApp.raw(sql);
-        // console.log(sqlLeaveAndRecord(data.month, data.userId));
-        const qCountScan = await dbApp.raw(`SELECT 
-        h.EmployeeID,
-        h.AccessDate
-      FROM hikvision h
-      WHERE
-          YEAR(h.AccessDate) = "${dayjs(data.month).format("YYYY")}"
-          AND MONTH(h.AccessDate) = "${dayjs(data.month).format("MM")}"
-      `);
-        const countScan = CountScanOffMount(qCountScan[0]);
+
         const finalData = MapFingle(
           record[0],
           leave[0],
           query[0],
           data.month
         ).map((item: any) => {
-          const cs = countScan.filter(
-            (find: any) => item.FINGLE_ID == find.EmployeeID
-          );
-          return {
-            ...item,
-            count: cs.length > 0 ? cs[0].count : 0,
-          };
+          var countStart = 0;
+          const dayMonth = dayjs(data.month).daysInMonth();
+          for (let index = 1; index <= dayMonth; index++) {
+            if (isValidTimeFormat(item?.[`ds${index}`])) {
+              countStart++;
+            }
+          }
+
+          var countEnd = 0;
+          for (let index = 1; index <= dayMonth; index++) {
+            if (isValidTimeFormat(item?.[`de${index}`])) {
+              countEnd++;
+            }
+          }
+          return { ...item, countStart: countStart, countEnd: countEnd };
         });
         res.json({
           status: 200,
