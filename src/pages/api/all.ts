@@ -26,6 +26,7 @@ export default async function handler(
       FROM hr_person hp
       LEFT JOIN (SELECT 
         ${loopDateAuth("morning", data.month)}
+<<<<<<< HEAD
         p.ID
       FROM hr_person p
       LEFT JOIN hikvision hik ON p.ID = hik.employeeID AND hik.AccessTime <= '11:59'
@@ -37,6 +38,19 @@ export default async function handler(
       FROM hr_person p
       LEFT JOIN hikvision hik ON p.ID = hik.employeeID AND hik.AccessTime >= '12:00'
       GROUP BY p.ID, p.HR_FNAME, hik.employeeID) de ON de.ID = hp.ID
+=======
+        p.FINGLE_ID
+      FROM hr_person p
+      LEFT JOIN hikvision hik ON p.FINGLE_ID = hik.employeeID AND hik.authTime <= '11:59'
+      GROUP BY p.FINGLE_ID, p.HR_FNAME, hik.employeeID) ds ON ds.FINGLE_ID = hp.FINGLE_ID
+
+      LEFT JOIN (SELECT 	
+        ${loopDateAuth("afternoon", data.month)}
+        p.FINGLE_ID       
+      FROM hr_person p
+      LEFT JOIN hikvision hik ON p.FINGLE_ID = hik.employeeID AND hik.authTime >= '12:00'
+      GROUP BY p.FINGLE_ID, p.HR_FNAME, hik.employeeID) de ON de.FINGLE_ID = hp.FINGLE_ID
+>>>>>>> ff611081ad271244626ca81b2a2041d29ea7e8b0
       
       LEFT JOIN hr_department hd ON hp.HR_DEPARTMENT_ID = hd.HR_DEPARTMENT_ID
       WHERE
