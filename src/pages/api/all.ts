@@ -41,6 +41,7 @@ export default async function handler(
       LEFT JOIN hr_department hd ON hp.HR_DEPARTMENT_ID = hd.HR_DEPARTMENT_ID
       WHERE
         CONCAT(hp.HR_FNAME," ",hp.HR_LNAME) LIKE '%${data.fullname}%'
+        ${data.userId !== 0 ? `AND hp.ID = ${data.userId}` : ""}
         ${
           data.department == "0"
             ? ``

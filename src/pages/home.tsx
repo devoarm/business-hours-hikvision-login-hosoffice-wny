@@ -22,7 +22,6 @@ export default function Home() {
   const route = useRouter();
   const onChange: DatePickerProps["onChange"] = (date, dateString) => {
     setSelectMount(dateString);
-    fetchData(dateString, fullname, selectDepart);
   };
   const fetchData = async (
     month: string,
@@ -62,17 +61,15 @@ export default function Home() {
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setFullname(newValue);
-    fetchData(selectMount, newValue, selectDepart);
   };
   useEffect(() => {
     fetchDepart();
   }, []);
   useEffect(() => {
     fetchData(selectMount, fullname, selectDepart);
-  }, [session, selectMount, fullname, selectDepart]);
+  }, [session]);
 
   const onChangeDepartMent = (value: string) => {
-    fetchData(selectMount, fullname, value);
     setSelectDepart(value);
   };
 
@@ -180,7 +177,15 @@ export default function Home() {
                 : true
             }
           />
-          <AButton className="ml-3" onClick={handleExport}>
+          <AButton
+            className="ml-3"
+            onClick={() => {
+              fetchData(selectMount, fullname, selectDepart);
+            }}
+          >
+            ค้นหา
+          </AButton>
+          <AButton className="ml-3" onClick={handleExport} color="success">
             Export
           </AButton>
         </div>
