@@ -31,10 +31,7 @@ export default function Home() {
     signOut();
   };
 
-  const filterOption = (
-    input: string,
-    option?: { label: string; value: string }
-  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
   return (
     <div className="p-3 bg-blue-100 min-h-screen">
       <div className="flex justify-between items-center bg-white shadow-md p-3 rounded-md">

@@ -27,6 +27,7 @@ import {
 } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import TableFilter from "@/components/table/data-grid/TableFilter";
+import NotRolePage from "@/components/not-role-page";
 
 export default function Home() {
   const [currentHr, setCurrentHr] = useState<any>();
@@ -34,6 +35,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const [hrPerson, setHrPerson] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [noRole, setNoRole] = useState(false);
   const [selectTemplate, setSelectTemplate] = useState<
     string | undefined | null
   >("");
@@ -56,6 +58,13 @@ export default function Home() {
   };
   useEffect(() => {
     fetchHr();
+    if (
+      session?.role.filter((item: any) => item == "DRCOMP_FINGER").length! > 0
+    ) {
+      setNoRole(false);
+    } else {
+      setNoRole(true);
+    }
   }, []);
 
   const handleLogout = () => {
@@ -84,6 +93,9 @@ export default function Home() {
       headerName: "ประเภทเวร",
     },
   ];
+  if (noRole) {
+    return <NotRolePage />;
+  }
   return (
     <div className="p-3 bg-blue-100 min-h-screen pb-5">
       <div className="flex justify-between items-center bg-white shadow-md p-3 rounded-md">
