@@ -10,20 +10,12 @@ export const dbApp: Knex = require("knex")({
   // },
   connection:
     process.env.NODE_ENV == "development"
-<<<<<<< HEAD
       ? {
-=======
-      ? {          
->>>>>>> ff611081ad271244626ca81b2a2041d29ea7e8b0
           host: "localhost",
           port: 3306,
           user: "root",
           password: "",
-<<<<<<< HEAD
           database: "hosoffice_wny",
-=======
-          database: "hosoffice_ksh",
->>>>>>> ff611081ad271244626ca81b2a2041d29ea7e8b0
         }
       : {
           host: process.env.hostApp,

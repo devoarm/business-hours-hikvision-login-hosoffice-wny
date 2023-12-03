@@ -18,7 +18,11 @@
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.17.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.3.2",
+    "@mui/material": "^5.14.19",
+    "@mui/x-data-grid": "^6.18.2",
     "@prisma/client": "^5.4.2",
     "@types/md5": "^2.3.4",
     "antd": "^5.10.0",
