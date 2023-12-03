@@ -10,7 +10,7 @@ import { DepartmentType } from "@/types/department.type";
 import AButton from "@/@core/components/AButton";
 import * as XLSX from "xlsx";
 import { useRouter } from "next/router";
-import TableFilter from "@/components/table/data-grid/TableFilter";
+
 import {
   Box,
   Button,
@@ -26,6 +26,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
+import TableFilter from "@/components/table/data-grid/TableFilter";
 
 export default function Home() {
   const [currentHr, setCurrentHr] = useState<any>();
@@ -87,7 +88,11 @@ export default function Home() {
     <div className="p-3 bg-blue-100 min-h-screen pb-5">
       <div className="flex justify-between items-center bg-white shadow-md p-3 rounded-md">
         <div>
-          <AButton color="grey1" onClick={() => router.push("/")} className="mr-5">
+          <AButton
+            color="grey1"
+            onClick={() => router.push("/")}
+            className="mr-5"
+          >
             หน้าแรก
           </AButton>
           คุณ {session?.HR_FNAME} {session?.HR_LNAME} (
@@ -104,7 +109,7 @@ export default function Home() {
       <Box sx={{ mx: 5, mt: 3, backgroundColor: "white" }}>
         <TableFilter
           columns={columns}
-          itemsProp={hrPerson}
+          item={hrPerson}
           rowId="ID"
           onClickRow={(e: GridRowParams) => {
             setCurrentHr(e.row);

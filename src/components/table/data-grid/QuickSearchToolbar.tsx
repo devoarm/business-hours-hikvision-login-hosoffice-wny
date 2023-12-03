@@ -6,7 +6,8 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import { GridToolbarFilterButton } from '@mui/x-data-grid'
-import MenuIcon from "@mui/icons-material/Menu";
+import Icon from '@/@core/components/icon'
+
 // ** Icon Imports
 
 
@@ -37,12 +38,12 @@ const QuickSearchToolbar = (props: Props) => {
         InputProps={{
           startAdornment: (
             <Box sx={{ mr: 2, display: 'flex' }}>
-              {/* <Icon icon='tabler:search' fontSize={20} /> */}
+              <Icon icon='tabler:search' fontSize={20} />
             </Box>
           ),
           endAdornment: (
             <IconButton size='small' title='Clear' aria-label='Clear' onClick={props.clearSearch}>
-              {/* <Icon icon='tabler:x' fontSize={20} /> */}
+              <Icon icon='tabler:x' fontSize={20} />
             </IconButton>
           )
         }}
