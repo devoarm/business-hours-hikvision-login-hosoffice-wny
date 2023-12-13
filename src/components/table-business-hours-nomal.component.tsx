@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 // import ColumnGroup from "antd/es/table/ColumnGroup";
-
+import "dayjs/locale/th";
 const { Column, ColumnGroup } = Table;
 
 import dayjs from "dayjs";
@@ -23,9 +23,6 @@ export default function DataNomalCustom({ item, selectDate }: Props) {
   const initFun = () => {
     const arrayCol: any = [];
     for (let index = 0; index < Number(momentDate); index++) {
-      const inputDate = `${Number(2023) - 543}-${dayjs(10, "M").format("MM")}-${
-        index + 1
-      }`;
       arrayCol.push({
         dataIndex: `d${index + 1}`,
         key: `d${index + 1}`,
@@ -74,9 +71,7 @@ export default function DataNomalCustom({ item, selectDate }: Props) {
         key="ID"
         width={200}
         filterSearch={true}
-        sorter={(a: any, b: any) =>
-          sorter(a.countStart, b.countStart)
-        }
+        sorter={(a: any, b: any) => sorter(a.countStart, b.countStart)}
       />
       <Column
         title="จำนวนวันออกงาน"
@@ -84,12 +79,16 @@ export default function DataNomalCustom({ item, selectDate }: Props) {
         key="ID"
         width={200}
         filterSearch={true}
-        sorter={(a: any, b: any) =>
-          sorter(a.countEnd, b.countEnd)
-        }
+        sorter={(a: any, b: any) => sorter(a.countEnd, b.countEnd)}
       />
       {dateOfMonth.map((item: any, index: number) => (
-        <ColumnGroup title={item.title} align="center" key={index}>
+        <ColumnGroup
+          title={`${item.title} (${dayjs(`${selectDate}-${item.title}`)
+            .locale("th")
+            .format("dddd")})`}
+          align="center"
+          key={index}
+        >
           <Column
             title="เข้า"
             dataIndex={`ds${item.title}`}

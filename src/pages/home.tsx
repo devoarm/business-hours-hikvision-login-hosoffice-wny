@@ -24,11 +24,13 @@ import CardPersonHiling from "@/components/home/card-person-hiling";
 import CardPersonCountAll from "@/components/home/card-person-count-all";
 import Data8Custom from "@/components/table-business-hours-8.component";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import Navbar from "@/@core/layout/navbar/business-hours";
 
 export default function Home() {
   const [businessHours, setBusinessHours] = useState([]);
   const [hilingTimeType, setHilingTimeType] = useState<"nomal" | "8">("nomal");
   const [loading, setLoading] = useState(false);
+
   const { data: session, status } = useSession();
   const [fullname, setFullname] = useState("");
   const [selectMount, setSelectMount] = useState(dayjs().format("YYYY-MM"));
@@ -85,6 +87,10 @@ export default function Home() {
   };
   useEffect(() => {
     fetchDepart();
+    const dayInmonth = [];
+    for (let index = 0; index < dayjs().daysInMonth(); index++) {
+      dayInmonth.push(dayjs(`2023-12-${index + 1}`).format("dddd"));
+    }
   }, []);
   useEffect(() => {
     if (session?.ID) {
@@ -105,10 +111,14 @@ export default function Home() {
     const lastDayOfCurrentMonth = dayjs(date).endOf("month");
     const momentDate = Number(lastDayOfCurrentMonth.format("D"));
     for (let index = 0; index < momentDate; index++) {
-      arrayRow1.push(`${index + 1}`);
+      arrayRow1.push(
+        `${index + 1} (${dayjs(`${selectMount}-${index + 1}`)
+          .locale("th")
+          .format("dddd")})`
+      );
       arrayRow1.push(``);
-      arrayRow2.push(`เช้า`);
-      arrayRow2.push(`บ่าย`);
+      arrayRow2.push(`เข้า`);
+      arrayRow2.push(`ออก`);
     }
 
     const mapData = businessHours.map((item: any) => {
@@ -143,7 +153,11 @@ export default function Home() {
     const lastDayOfCurrentMonth = dayjs(date).endOf("month");
     const momentDate = Number(lastDayOfCurrentMonth.format("D"));
     for (let index = 0; index < momentDate; index++) {
-      arrayRow1.push(`${index + 1}`);
+      arrayRow1.push(
+        `${index + 1} (${dayjs(`${selectMount}-${index + 1}`)
+          .locale("th")
+          .format("dddd")})`
+      );
       arrayRow1.push(``);
       arrayRow1.push(``);
       arrayRow1.push(``);
@@ -184,9 +198,6 @@ export default function Home() {
     // Save the workbook as an Excel file
     XLSX.writeFile(wb, "exportedDataWithMultipleMergedColumns.xlsx");
   };
-  const handleLogout = () => {
-    signOut();
-  };
 
   const filterOption = (
     input: string,
@@ -194,38 +205,7 @@ export default function Home() {
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
   return (
     <div className="p-3 bg-blue-100 min-h-screen">
-      <div className="flex justify-between items-center bg-white shadow-md p-3 rounded-md">
-        <div>
-          <AButton
-            color="grey1"
-            onClick={() => router.push("/")}
-            className="mr-5"
-          >
-            <div className="flex items-center">
-              <Icon icon="tabler:home" className="mr-1" />
-              <p>หน้าแรก</p>
-            </div>
-          </AButton>
-          คุณ {session?.HR_FNAME} {session?.HR_LNAME} (
-          {session?.role.filter((item: any) => item == "DRCOMP_FINGER")
-            .length! > 0
-            ? "ผู้ดูแลระบบ"
-            : "เจ้าหน้าที่"}
-          )
-        </div>
-        <div>
-          <AButton
-            className="mr-3"
-            color="secondary"
-            onClick={() => {
-              router.push("/list-no-hiling-time");
-            }}
-          >
-            ตั้งค่าเวรบุตคล
-          </AButton>
-          <AButton onClick={() => handleLogout()}>ออกจากระบบ</AButton>
-        </div>
-      </div>
+      <Navbar />
       <div>
         <Row className="mb-5">
           <Col xs={8} className="p-2">

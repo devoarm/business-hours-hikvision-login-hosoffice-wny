@@ -53,7 +53,7 @@ const Data8Custom = ({ item, selectDate }: Props) => {
         width: 100,
         fixed: "left",
       },
-      ...loopCol8(countDate),
+      ...loopCol8(countDate,selectDate),
     ]);
   }, []);
 

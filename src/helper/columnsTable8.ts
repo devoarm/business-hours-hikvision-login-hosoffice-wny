@@ -1,8 +1,12 @@
-export const loopCol8 = (selectDate: number) => {
+import dayjs from "dayjs";
+
+export const loopCol8 = (countDate: number, selectMonth: string) => {
   const arr: Array<any> = [];
-  for (let index = 0; index < selectDate; index++) {
+  for (let index = 0; index < countDate; index++) {
     arr.push({
-      title: `${index + 1}`,
+      title: `${index + 1} (${dayjs(`${selectMonth}-${index + 1}`)
+        .locale("th")
+        .format("dddd")})`,
       children: [
         {
           title: "เช้า",

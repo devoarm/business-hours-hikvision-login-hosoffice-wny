@@ -28,6 +28,7 @@ import {
 import { GridRowParams } from "@mui/x-data-grid";
 import TableFilter from "@/components/table/data-grid/TableFilter";
 import NotRolePage from "@/components/not-role-page";
+import Navbar from "@/@core/layout/navbar/business-hours";
 
 export default function Home() {
   const [currentHr, setCurrentHr] = useState<any>();
@@ -39,7 +40,7 @@ export default function Home() {
   const [selectTemplate, setSelectTemplate] = useState<
     string | undefined | null
   >("");
-  const router = useRouter();
+
   const handleChange = (event: SelectChangeEvent) => {
     setSelectTemplate(`${event.target.value}`);
   };
@@ -65,7 +66,7 @@ export default function Home() {
     } else {
       setNoRole(true);
     }
-  }, []);
+  }, [session?.ID]);
 
   const handleLogout = () => {
     signOut();
@@ -98,26 +99,7 @@ export default function Home() {
   }
   return (
     <div className="p-3 bg-blue-100 min-h-screen pb-5">
-      <div className="flex justify-between items-center bg-white shadow-md p-3 rounded-md">
-        <div>
-          <AButton
-            color="grey1"
-            onClick={() => router.push("/")}
-            className="mr-5"
-          >
-            หน้าแรก
-          </AButton>
-          คุณ {session?.HR_FNAME} {session?.HR_LNAME} (
-          {session?.role.filter((item: any) => item == "DRCOMP_FINGER")
-            .length! > 0
-            ? "ผู้ดูแลระบบ"
-            : "เจ้าหน้าที่"}
-          )
-        </div>
-        <div>
-          <AButton onClick={() => handleLogout()}>ออกจากระบบ</AButton>
-        </div>
-      </div>
+      <Navbar />
       <Box sx={{ mx: 5, mt: 3, backgroundColor: "white" }}>
         <TableFilter
           columns={columns}

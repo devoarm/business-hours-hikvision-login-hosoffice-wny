@@ -10,6 +10,7 @@ import { DepartmentType } from "@/types/department.type";
 import AButton from "@/@core/components/AButton";
 import * as XLSX from "xlsx";
 import { useRouter } from "next/router";
+import Navbar from "@/@core/layout/navbar/business-hours";
 
 export default function Home() {
   const [businessHours, setBusinessHours] = useState([]);
@@ -26,27 +27,9 @@ export default function Home() {
   useEffect(() => {
     fetchPerson();
   }, []);
-
-  const handleLogout = () => {
-    signOut();
-  };
-
-
   return (
     <div className="p-3 bg-blue-100 min-h-screen">
-      <div className="flex justify-between items-center bg-white shadow-md p-3 rounded-md">
-        <div>
-          คุณ {session?.HR_FNAME} {session?.HR_LNAME} (
-          {session?.role.filter((item: any) => item == "DRCOMP_FINGER")
-            .length! > 0
-            ? "ผู้ดูแลระบบ"
-            : "เจ้าหน้าที่"}
-          )
-        </div>
-        <div>
-          <AButton onClick={() => handleLogout()}>ออกจากระบบ</AButton>
-        </div>
-      </div>
+      <Navbar />
       <div className="pt-5">
         <div className="flex justify-center mb-5 "></div>
       </div>
