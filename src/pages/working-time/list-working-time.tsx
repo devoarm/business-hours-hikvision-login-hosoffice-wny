@@ -142,7 +142,7 @@ export default function Home() {
               onChange={handleChange}
             >
               {workingTime.map((item: any) => (
-                <MenuItem value={item.id}>{item.title}</MenuItem>
+                <MenuItem value={item.id} key={item.id}>{item.title}</MenuItem>
               ))}
             </Select>
           </FormControl>
