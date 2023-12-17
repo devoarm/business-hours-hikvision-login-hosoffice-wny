@@ -4,7 +4,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import "dayjs/locale/th";
 import dayjs from "dayjs";
 import axios from "axios";
-import { Button, Tabs } from "antd";
+import { Avatar, Button, Tabs } from "antd";
 import {
   Col,
   DatePicker,
@@ -20,11 +20,10 @@ import AButton from "@/@core/components/AButton";
 import * as XLSX from "xlsx";
 import { useRouter } from "next/router";
 import CardPersonNotHiling from "@/components/home/card-person-not-hiling";
-import CardPersonHiling from "@/components/home/card-person-hiling";
+import CardPersonNotWorkingTime from "@/components/home/card-person-not-working-time";
 import CardPersonCountAll from "@/components/home/card-person-count-all";
 import Data8Custom from "@/components/table-business-hours-8.component";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import Navbar from "@/@core/layout/navbar/business-hours";
+import AdminLayout from "@/@core/layout/AdminDashboard/layout";
 
 export default function Home() {
   const [businessHours, setBusinessHours] = useState([]);
@@ -85,6 +84,7 @@ export default function Home() {
     const newValue = event.target.value;
     setFullname(newValue);
   };
+
   useEffect(() => {
     fetchDepart();
     const dayInmonth = [];
@@ -204,20 +204,21 @@ export default function Home() {
     option?: { label: string; value: string }
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
   return (
-    <div className="p-3 bg-blue-100 min-h-screen">
-      <Navbar />
+    <AdminLayout>
       <div>
-        <Row className="mb-5">
-          <Col xs={8} className="p-2">
-            <CardPersonNotHiling />
-          </Col>
-          <Col xs={8} className="p-2">
-            <CardPersonHiling />
-          </Col>
-          <Col xs={8} className="p-2">
-            <CardPersonCountAll />
-          </Col>
-        </Row>
+        <div className="hidden md:block">
+          <Row className="mb-5 ">
+            <Col xs={8} className="p-2">
+              <CardPersonNotWorkingTime />
+            </Col>
+            <Col xs={8} className="p-2">
+              <CardPersonNotHiling />
+            </Col>
+            <Col xs={8} className="p-2">
+              <CardPersonCountAll />
+            </Col>
+          </Row>
+        </div>
 
         <div className="flex justify-center mb-5 ">
           <Input
@@ -295,6 +296,26 @@ export default function Home() {
             เวร 8 ชั่วโมง
           </AButton>
         </div>
+        <div className="flex justify-center items-center mb-3">
+          <Avatar
+            className="mr-1"
+            style={{ backgroundColor: "green", verticalAlign: "middle" }}
+            size="small"
+          ></Avatar>
+          สีเขียว = ปกติ,{" "}
+          <Avatar
+            className="mr-1"
+            style={{ backgroundColor: "orange", verticalAlign: "middle" }}
+            size="small"
+          ></Avatar>
+          สีส้ม = สาย,
+          <Avatar
+            className="mr-1"
+            style={{ backgroundColor: "red", verticalAlign: "middle" }}
+            size="small"
+          ></Avatar>
+          สีแดงเกินเวลา หรือ กลับก่อน
+        </div>
         {loading ? (
           <div className="mt-[150px]">
             <Spin tip="Loading" size="large">
@@ -307,6 +328,6 @@ export default function Home() {
           <Data8Custom item={businessHours} selectDate={selectMount} />
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 }

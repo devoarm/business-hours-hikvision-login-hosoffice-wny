@@ -20,6 +20,11 @@ export default async function handler(
         const sql = `SELECT 
         hp.ID,
         CONCAT(hp.HR_FNAME," ",hp.HR_LNAME) as fullname,
+        wt.title,
+        hpwt.working_time_id,
+        wt.startTime,
+        wt.startTimeLate,
+        wt.endTime,
         hd.HR_DEPARTMENT_NAME,
         ds.* ,
         de.*
@@ -39,9 +44,12 @@ export default async function handler(
       GROUP BY p.ID, p.HR_FNAME, hik.employeeID) de ON de.ID = hp.ID
       LEFT JOIN hr_status hs ON hp.HR_STATUS_ID = hs.HR_STATUS_ID
       LEFT JOIN hr_department hd ON hp.HR_DEPARTMENT_ID = hd.HR_DEPARTMENT_ID
+      LEFT JOIN hr_person_working_time hpwt ON hpwt.hr_id = hp.ID
+	    LEFT JOIN working_time wt ON wt.id = hpwt.working_time_id
       WHERE
         CONCAT(hp.HR_FNAME," ",hp.HR_LNAME) LIKE '%${data.fullname}%'
         AND hs.HR_STATUS_ID IN('01')
+
         ${data.userId !== 0 ? `AND hp.ID = ${data.userId}` : ""}
         ${
           data.department == "0"

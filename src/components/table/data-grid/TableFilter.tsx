@@ -1,48 +1,61 @@
 // ** React Imports
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState } from "react";
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import { DataGrid, GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
-import QuickSearchToolbar from './QuickSearchToolbar'
-
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import CardHeader from "@mui/material/CardHeader";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridRowParams,
+} from "@mui/x-data-grid";
+import QuickSearchToolbar from "./QuickSearchToolbar";
 
 const escapeRegExp = (value: string) => {
-  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-}
+  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 type Props = {
-  title?: string
-  item: any
-  columns: any
-  rowId:string
-  onClickRow?: Function
-}
-const TableFilter = ({ item, columns, title,rowId,onClickRow }: Props) => {
+  title?: string;
+  item: any;
+  columns: any;
+  rowId?: string;
+  onClickRow: Function;
+};
+const TableFilter = ({
+  item,
+  columns,
+  title,
+  rowId = "id",
+  onClickRow,
+}: Props) => {
   // ** States
 
-  const [searchText, setSearchText] = useState<string>('')
-  const [filteredData, setFilteredData] = useState<any[]>([])
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 7 })
+  const [searchText, setSearchText] = useState<string>("");
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 7,
+  });
 
   const handleSearch = (searchValue: string) => {
-    setSearchText(searchValue)
-    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
+    setSearchText(searchValue);
+    const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
     const filteredRows = item.filter((row: any) => {
-      return Object.keys(row).some(field => {
+      return Object.keys(row).some((field) => {
         // @ts-ignore
-        return searchRegex.test(row[field].toString())
-      })
-    })
+        return searchRegex.test(row[field]);
+      });
+    });
     if (searchValue.length) {
-      setFilteredData(filteredRows)
+      setFilteredData(filteredRows);
     } else {
-      setFilteredData([])
+      setFilteredData([]);
     }
-  }
+  };
 
   return (
     <div>
@@ -53,24 +66,23 @@ const TableFilter = ({ item, columns, title,rowId,onClickRow }: Props) => {
         paginationModel={paginationModel}
         slots={{ toolbar: QuickSearchToolbar }}
         onPaginationModelChange={setPaginationModel}
-        onRowClick={(params: GridRowParams) => {
-          onClickRow ? onClickRow(params) : null
-        }}
         rows={filteredData.length ? filteredData : item}
-        getRowId={(row: any) => row?.[`${rowId}`]}
+        getRowId={(row) => row?.[rowId]}
+        onRowClick={(e: GridRowParams) => onClickRow(e)}
         slotProps={{
           baseButton: {
-            variant: 'outlined'
+            variant: "outlined",
           },
           toolbar: {
             value: searchText,
-            clearSearch: () => handleSearch(''),
-            onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-          }
+            clearSearch: () => handleSearch(""),
+            onChange: (event: ChangeEvent<HTMLInputElement>) =>
+              handleSearch(event.target.value),
+          },
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default TableFilter
+export default TableFilter;

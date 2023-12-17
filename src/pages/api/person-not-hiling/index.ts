@@ -14,7 +14,8 @@ export default async function handler(
   WHERE 
     h.ID NOT IN(
     SELECT hph.HR_PERSON_ID FROM hr_person_hiling_time hph
-  )`);
+  )
+  AND h.HR_STATUS_ID = "01"`);
     res.json({ status: 200, results: query[0] });
   } catch (error: any) {
     res.json({ status: 500, results: error.message });

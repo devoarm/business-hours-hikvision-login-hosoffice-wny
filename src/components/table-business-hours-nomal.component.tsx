@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 // import ColumnGroup from "antd/es/table/ColumnGroup";
 import "dayjs/locale/th";
 const { Column, ColumnGroup } = Table;
 
 import dayjs from "dayjs";
+import { isValidTimeFormat } from "@/helper/api/isValidDateFormat";
 
 type Props = {
   item: Array<any>;
@@ -94,12 +95,52 @@ export default function DataNomalCustom({ item, selectDate }: Props) {
             dataIndex={`ds${item.title}`}
             key={`ds${item.title}`}
             width={120}
+            render={(value: string, record: any) => (
+              <>
+                <Tag
+                  color={
+                    !isValidTimeFormat(value)
+                      ? ""
+                      : value > record.startTime &&
+                        value <= record.startTimeLate &&
+                        record.working_time_id
+                      ? "orange"
+                      : value > record.startTime && record.working_time_id
+                      ? "red"
+                      : record.working_time_id
+                      ? "green"
+                      : ""
+                  }
+                  key={record.ID}
+                >
+                  {value}
+                </Tag>
+              </>
+            )}
           />
           <Column
             title="ออก"
             dataIndex={`de${item.title}`}
             key={`de${item.title}`}
             width={120}
+            render={(value: string, record: any) => (
+              <>
+                <Tag
+                  color={
+                    !isValidTimeFormat(value)
+                      ? ""
+                      : value < record.endTime && record.working_time_id
+                      ? "red"
+                      : record.working_time_id
+                      ? "green"
+                      : ""
+                  }
+                  key={record.ID}
+                >
+                  {value}
+                </Tag>
+              </>
+            )}
           />
         </ColumnGroup>
       ))}

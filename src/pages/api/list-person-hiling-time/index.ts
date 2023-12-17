@@ -14,7 +14,8 @@ export default async function handler(
 		htt.HILING_TIME_NAME
   FROM hr_person h
 	LEFT JOIN hr_person_hiling_time hpht ON hpht.HR_PERSON_ID = h.ID
-	LEFT JOIN hiling_time_template htt ON hpht.TEMPLATE_ID = htt.ID`);
+	LEFT JOIN hiling_time_template htt ON hpht.TEMPLATE_ID = htt.ID
+  WHERE h.HR_STATUS_ID = "01"`);
     res.json({ status: 200, results: query[0] });
   } catch (error: any) {
     res.json({ status: 500, results: error.message });

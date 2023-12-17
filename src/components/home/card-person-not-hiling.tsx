@@ -25,7 +25,9 @@ function CardPersonNotHiling() {
     >
       <p>คนที่ยังไม่ตั้งค่าเวร</p>
       <div className="flex items-center justify-center mt-2">
-        <div className='bg-red-500 p-2 rounded-md mr-4'><Icon icon="tabler:circle-off" fontSize={30} color="white"/></div>
+        <div className="bg-red-500 p-2 rounded-md mr-4">
+          <Icon icon="tabler:circle-off" fontSize={30} color="white" />
+        </div>
         <p className="text-center text-3xl mt-2">{count} คน</p>
       </div>
     </div>

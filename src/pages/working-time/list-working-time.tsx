@@ -37,6 +37,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const [hrPerson, setHrPerson] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [workingTime, setWorkingTime] = useState([]);
   const [noRole, setNoRole] = useState(false);
   const [selectTemplate, setSelectTemplate] = useState<
     string | undefined | null
@@ -53,13 +54,17 @@ export default function Home() {
   };
 
   const fetchHr = async () => {
-    const res = await axios.get(`/api/list-person-hiling-time`);
+    const res = await axios.get(`/api/working-time/hr-working-time`);
     if (res.data.status) {
       setHrPerson(res.data.results);
     }
   };
   useEffect(() => {
+    fetchWorkingTime();
     fetchHr();
+  }, []);
+
+  useEffect(() => {
     if (
       session?.role.filter((item: any) => item == "DRCOMP_FINGER").length! > 0
     ) {
@@ -68,12 +73,19 @@ export default function Home() {
       setNoRole(true);
     }
   }, [session?.ID]);
-
-
+  const fetchWorkingTime = async () => {
+    const res = await axios.get(`/api/working-time`);
+    if (res.data.status == 200) {
+      setWorkingTime(res.data.results);
+    }
+  };
+  const handleLogout = () => {
+    signOut();
+  };
   const handleSubmit = async () => {
-    const res = await axios.post("/api/add-person-hiling-time", {
-      HR_PERSON_ID: currentHr.ID,
-      TEMPLATE_ID: selectTemplate,
+    const res = await axios.post("/api/working-time/hr-working-time", {
+      hr_id: currentHr.ID,
+      working_time_id: selectTemplate,
     });
     if (res.data.status == 200) {
       setCurrentHr(null);
@@ -89,8 +101,8 @@ export default function Home() {
     },
     {
       flex: 1,
-      field: "HILING_TIME_NAME",
-      headerName: "ประเภทเวร",
+      field: "title",
+      headerName: "ประเภทเวลาปฏิบัติงาน",
     },
   ];
   if (noRole) {
@@ -105,7 +117,7 @@ export default function Home() {
           rowId="ID"
           onClickRow={(e: GridRowParams) => {
             setCurrentHr(e.row);
-            setSelectTemplate(e.row.TEMPLATE_ID);
+            setSelectTemplate(e.row.working_time_id);
             handleClickOpen();
           }}
         />
@@ -119,7 +131,7 @@ export default function Home() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          เลือกรูปแบบเวร คุณ {currentHr?.fullname!}
+          เลือกรูปแบบเวลาเข้าเวร คุณ {currentHr?.fullname!}
         </DialogTitle>
         <DialogContent>
           <FormControl fullWidth sx={{ mt: 2 }}>
@@ -129,8 +141,9 @@ export default function Home() {
               label="เลือกรูปแบบเวร"
               onChange={handleChange}
             >
-              <MenuItem value={"1"}>เวรปกติ</MenuItem>
-              <MenuItem value={"2"}>เวร 8 ชั่วโมง</MenuItem>
+              {workingTime.map((item: any) => (
+                <MenuItem value={item.id}>{item.title}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </DialogContent>

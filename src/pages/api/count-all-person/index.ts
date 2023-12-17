@@ -9,7 +9,8 @@ export default async function handler(
   try {
     const query = await dbApp.raw(`SELECT 
     COUNT(h.ID) as count   
-  FROM hr_person h`);
+  FROM hr_person h
+  WHERE h.HR_STATUS_ID = "01"`);
     res.json({ status: 200, results: query[0][0] });
   } catch (error: any) {
     res.json({ status: 500, results: error.message });

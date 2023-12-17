@@ -20,7 +20,7 @@ type Props = {
   currentHr: any;
   handleSubmited: Function;
 };
-function ModalHilingTime({
+function ModalWorkingTime({
   handleClose,
   open,
   currentHr,
@@ -29,31 +29,43 @@ function ModalHilingTime({
   const [selectTemplate, setSelectTemplate] = useState<
     string | undefined | null
   >("");
+  const [workingTime, setWorkingTime] = useState([]);
   const { data: session, status } = useSession();
   const handleChange = (event: SelectChangeEvent) => {
     setSelectTemplate(`${event.target.value}`);
   };
+
   const handleSubmit = async () => {
-    const res = await axios.post("/api/add-person-hiling-time", {
-      HR_PERSON_ID: currentHr.ID,
-      TEMPLATE_ID: selectTemplate,
+    const res = await axios.post("/api/working-time/hr-working-time", {
+      hr_id: currentHr.ID,
+      working_time_id: selectTemplate,
     });
     if (res.data.status == 200) {
       handleSubmited();
       handleClose();
     }
   };
+  const fetchWorkingTime = async () => {
+    const res = await axios.get(`/api/working-time`);
+    if (res.data.status == 200) {
+      setWorkingTime(res.data.results);
+    }
+  };
   const fetchWorkingTimeByPerson = async () => {
     const res = await axios.get(
-      `/api/person-hiling/by-id-person/${session?.ID}`
+      `/api/working-time/by-id-person/${session?.ID}`
     );
     if (res.data.status == 200) {
-      setSelectTemplate(res.data.results.TEMPLATE_ID);
+      setSelectTemplate(res.data.results.working_time_id);
     }
   };
   useEffect(() => {
+    fetchWorkingTime();
+  }, []);
+  useEffect(() => {
     fetchWorkingTimeByPerson();
   }, [session?.ID]);
+
   return (
     <Dialog
       open={open}
@@ -64,18 +76,20 @@ function ModalHilingTime({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        เลือกรูปแบบเวร คุณ {currentHr?.HR_FNAME} {currentHr?.HR_LNAME}
+        เลือกรูปแบบเวลาปฏิบัติงาน คุณ {currentHr?.HR_FNAME}{" "}
+        {currentHr?.HR_LNAME}
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel>เลือกรูปแบบเวร</InputLabel>
+          <InputLabel>เลือกรูปแบบเวลาปฏิบัติงาน</InputLabel>
           <Select
             value={selectTemplate!}
-            label="เลือกรูปแบบเวร"
+            label="เลือกรูปแบบเวลาปฏิบัติงาน"
             onChange={handleChange}
           >
-            <MenuItem value={"1"}>เวรปกติ</MenuItem>
-            <MenuItem value={"2"}>เวร 8 ชั่วโมง</MenuItem>
+            {workingTime.map((item: any) => (
+              <MenuItem value={item.id}>{item.title}</MenuItem>
+            ))}
           </Select>
         </FormControl>
       </DialogContent>
@@ -89,4 +103,4 @@ function ModalHilingTime({
   );
 }
 
-export default ModalHilingTime;
+export default ModalWorkingTime;

@@ -3,11 +3,11 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function CardPersonHiling() {
+function CardPersonNotWorkingTime() {
   const [count, setCount] = useState(0);
   const router = useRouter();
   const fetchCount = async () => {
-    const res = await axios.get(`/api/person-hiling`);
+    const res = await axios.get(`/api/working-time/person-not-working-time`);
     if (res.data.status) {
       setCount(res.data.results.length);
     }
@@ -20,13 +20,13 @@ function CardPersonHiling() {
     <div
       className="mt-5 bg-white p-5 shadow-md rounded-md"
       onClick={() => {
-        router.push("/list-no-hiling-time");
+        router.push("/working-time/list-working-time");
       }}
     >
-      <p>คนที่ตั้งค่าเวรแล้ว</p>
+      <p>คนที่ยังไม่กำหนดเวลาเวร</p>
       <div className="flex items-center justify-center mt-2">
         <div className="bg-green-500 p-2 rounded-md mr-4">
-          <Icon icon="tabler:check" fontSize={30} color="white" />
+          <Icon icon="tabler:circle-off" fontSize={30} color="white" />
         </div>
         <p className="text-center text-3xl mt-2">{count} คน</p>
       </div>
@@ -34,4 +34,4 @@ function CardPersonHiling() {
   );
 }
 
-export default CardPersonHiling;
+export default CardPersonNotWorkingTime;

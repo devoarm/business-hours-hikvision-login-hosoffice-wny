@@ -4,32 +4,6 @@ import type { ColumnsType } from "antd/es/table";
 import { loopCol8 } from "@/helper/columnsTable8";
 import dayjs from "dayjs";
 
-interface DataType {
-  key: React.Key;
-  name: string;
-  age: number;
-  street: string;
-  building: string;
-  number: number;
-  companyAddress: string;
-  companyName: string;
-  gender: string;
-}
-
-const data: DataType[] = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i,
-    name: "John Brown",
-    age: i + 1,
-    street: "Lake Park",
-    building: "C",
-    number: 2035,
-    companyAddress: "Lake Street 42",
-    companyName: "SoftLake Co",
-    gender: "M",
-  });
-}
 type Props = {
   item: Array<any>;
   selectDate: string;
@@ -53,7 +27,7 @@ const Data8Custom = ({ item, selectDate }: Props) => {
         width: 100,
         fixed: "left",
       },
-      ...loopCol8(countDate,selectDate),
+      ...loopCol8(countDate, selectDate),
     ]);
   }, []);
 
